@@ -9,6 +9,7 @@ concurrency:
 
 jobs:
   build-test:
+    name: ${{ matrix.os }}-${{ matrix.config }}
     strategy:
       fail-fast: false
       matrix:
