@@ -1,6 +1,6 @@
 # Use C++20 and CMake
 
-*Status:* Accepted  
+*Status:* Accepted
 *Date:* 2025-08-23
 
 ## Context and Problem Statement

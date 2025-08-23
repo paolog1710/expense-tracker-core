@@ -1,6 +1,6 @@
 # {short title}
 
-*Status:* {Proposed|Accepted|Deprecated}  
+*Status:* {Proposed|Accepted|Deprecated}
 *Date:* {YYYY-MM-DD}
 
 ## Context and Problem Statement

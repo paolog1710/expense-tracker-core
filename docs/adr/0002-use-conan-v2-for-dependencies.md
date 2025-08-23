@@ -1,7 +1,7 @@
 # Use Conan v2 for C++ Dependency Management
 
-*Status:* Accepted  
-*Date:* 2025-08-23  
+*Status:* Accepted
+*Date:* 2025-08-23
 *Decision ID:* 0002
 
 ## Context and Problem Statement
