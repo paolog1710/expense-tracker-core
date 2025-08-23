@@ -1,0 +1,146 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        config: [Debug, Release]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan v2
+        run: pip install --upgrade conan
+
+      - name: Create default Conan profile
+        run: conan profile detect --force
+
+      - name: Cache Conan
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.conan2
+            C:\Users\runneradmin\.conan2
+          key: conan2-${{ runner.os }}-${{ matrix.config }}-${{ hashFiles('conanfile.py', 'CMakePresets.json', 'conan/profiles/**', 'conan/lockfiles/**') }}
+          restore-keys: |
+            conan2-${{ runner.os }}-${{ matrix.config }}-
+            conan2-${{ runner.os }}-
+
+      - name: Set up CMake
+        uses: lukka/get-cmake@v3
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v3
+
+      # MSVC environment for cl.exe
+      - name: MSVC Dev Cmd (x64)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      # -------- Conan install (host+build=default), no toolset/platform injected --------
+      - name: Conan install
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              OUT=build/win-debug-conan
+            else
+              OUT=build/win-release-conan
+            fi
+          else
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              OUT=build/linux-gcc-debug-conan
+            else
+              OUT=build/linux-gcc-release-conan
+            fi
+          fi
+
+          conan install . \
+            -pr:h=default -pr:b=default \
+            -s build_type=${{ matrix.config }} \
+            -s compiler.cppstd=20 \
+            -c tools.cmake.cmaketoolchain:generator=Ninja \
+            -c tools.cmake.cmaketoolchain:toolset= \
+            -c tools.cmake.cmaketoolchain:generator_platform= \
+            --output-folder="$OUT" --build=missing
+
+      # -------- Configure / Build / Test via your presets --------
+      - name: Configure
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              cmake --preset win-debug-conan --fresh
+            else
+              cmake --preset win-release-conan --fresh
+            fi
+          else
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              cmake --preset linux-gcc-debug-conan --fresh
+            else
+              cmake --preset linux-gcc-release-conan --fresh
+            fi
+          fi
+
+      - name: Build
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              cmake --build --preset build-win-debug-conan --parallel
+            else
+              cmake --build --preset build-win-release-conan --parallel
+            fi
+          else
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              cmake --build --preset build-linux-gcc-debug-conan --parallel
+            else
+              cmake --build --preset build-linux-gcc-release-conan --parallel
+            fi
+          fi
+
+      - name: Test
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              ctest --preset test-win-debug-conan
+            else
+              ctest --preset test-win-release-conan
+            fi
+          else
+            if [ "${{ matrix.config }}" = "Debug" ]; then
+              ctest --preset test-linux-gcc-debug-conan
+            else
+              ctest --preset test-linux-gcc-release-conan
+            fi
+          fi
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ctest-logs-${{ matrix.os }}-${{ matrix.config }}
+          path: |
+            build/**/Testing/Temporary/LastTest.log
+            build/**/CMakeFiles/CMakeOutput.log
+            build/**/CMakeFiles/CMakeError.log
+          if-no-files-found: ignore
