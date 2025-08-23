@@ -1,12 +1,12 @@
 {
-    "terminal.integrated.defaultProfile.windows": "Developer PowerShell VS2019",
+    "terminal.integrated.defaultProfile.windows": "Developer PowerShell VS2022",
     "terminal.integrated.profiles.windows": {
-        "Developer PowerShell VS2019": {
+        "Developer PowerShell VS2022": {
             "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
             "args": [
                 "-NoExit",
                 "-Command",
-                "&{ Import-Module \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"; Enter-VsDevShell -VsInstallPath \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\" -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64' }"
+                "&{ Import-Module \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"; Enter-VsDevShell -VsInstallPath \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\" -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64' }"
             ]
         }
     }

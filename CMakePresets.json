@@ -1,104 +1,121 @@
 {
-    "version": 6,
+  "version": 6,
 
-    "configurePresets": [
-      {
-        "name": "ninja-base",
-        "hidden": true,
-        "generator": "Ninja",
-        "binaryDir": "${sourceDir}/build/${presetName}",
-        "cacheVariables": {
-          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
-        }
-      },
-
-      {
-        "name": "win-debug",
-        "inherits": "ninja-base",
-        "displayName": "Windows MSVC - Debug",
-        "condition": {
-          "type": "equals",
-          "lhs": "${hostSystemName}",
-          "rhs": "Windows"
-        },
-        "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Debug"
-        }
-      },
-      {
-        "name": "win-release",
-        "inherits": "ninja-base",
-        "displayName": "Windows MSVC - Release",
-        "condition": {
-          "type": "equals",
-          "lhs": "${hostSystemName}",
-          "rhs": "Windows"
-        },
-        "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Release"
-        }
-      },
-
-      {
-        "name": "linux-gcc-debug",
-        "inherits": "ninja-base",
-        "displayName": "Linux GCC - Debug",
-        "condition": {
-          "type": "equals",
-          "lhs": "${hostSystemName}",
-          "rhs": "Linux"
-        },
-        "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Debug",
-          "CMAKE_C_COMPILER": "gcc",
-          "CMAKE_CXX_COMPILER": "g++"
-        }
-      },
-      {
-        "name": "linux-gcc-release",
-        "inherits": "ninja-base",
-        "displayName": "Linux GCC - Release",
-        "condition": {
-          "type": "equals",
-          "lhs": "${hostSystemName}",
-          "rhs": "Linux"
-        },
-        "cacheVariables": {
-          "CMAKE_BUILD_TYPE": "Release",
-          "CMAKE_C_COMPILER": "gcc",
-          "CMAKE_CXX_COMPILER": "g++"
-        }
+  "configurePresets": [
+    {
+      "name": "ninja-base",
+      "hidden": true,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "CMAKE_GENERATOR_PLATFORM": "",
+        "CMAKE_GENERATOR_TOOLSET": ""
       }
-
-    ],
-
-    "buildPresets": [
-      { "name": "build-win-debug", "configurePreset": "win-debug" },
-      { "name": "build-win-release", "configurePreset": "win-release" },
-      { "name": "build-linux-gcc-debug", "configurePreset": "linux-gcc-debug" },
-      { "name": "build-linux-gcc-release", "configurePreset": "linux-gcc-release" }
-    ],
-
-    "testPresets": [
-      {
-        "name": "test-win-debug",
-        "configurePreset": "win-debug",
-        "output": { "outputOnFailure": true }
-      },
-      {
-        "name": "test-win-release",
-        "configurePreset": "win-release",
-        "output": { "outputOnFailure": true }
-      },
-      {
-        "name": "test-linux-gcc-debug",
-        "configurePreset": "linux-gcc-debug",
-        "output": { "outputOnFailure": true }
-      },
-      {
-        "name": "test-linux-gcc-release",
-        "configurePreset": "linux-gcc-release",
-        "output": { "outputOnFailure": true }
+    },
+    {
+      "name": "win-debug",
+      "inherits": "ninja-base",
+      "displayName": "Windows MSVC - Debug",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
+    },
+    {
+      "name": "win-release",
+      "inherits": "ninja-base",
+      "displayName": "Windows MSVC - Release",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" }
+    },
+    {
+      "name": "linux-gcc-debug",
+      "inherits": "ninja-base",
+      "displayName": "Linux GCC - Debug",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
       }
-    ]
-  }
+    },
+    {
+      "name": "linux-gcc-release",
+      "inherits": "ninja-base",
+      "displayName": "Linux GCC - Release",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "win-debug-conan",
+      "inherits": "ninja-base",
+      "displayName": "Windows MSVC - Debug (Conan)",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/win-debug-conan/build/Debug/generators/conan_toolchain.cmake"
+      }
+    },
+    {
+      "name": "win-release-conan",
+      "inherits": "ninja-base",
+      "displayName": "Windows MSVC - Release (Conan)",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/win-release-conan/build/Release/generators/conan_toolchain.cmake"
+      }
+    },
+    {
+      "name": "linux-gcc-debug-conan",
+      "inherits": "ninja-base",
+      "displayName": "Linux GCC - Debug (Conan)",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/linux-gcc-debug-conan/build/Debug/generators/conan_toolchain.cmake",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "linux-gcc-release-conan",
+      "inherits": "ninja-base",
+      "displayName": "Linux GCC - Release (Conan)",
+      "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Linux" },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/linux-gcc-release-conan/build/Release/generators/conan_toolchain.cmake",
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    { "name": "build-win-debug", "configurePreset": "win-debug" },
+    { "name": "build-win-release", "configurePreset": "win-release" },
+    { "name": "build-linux-gcc-debug", "configurePreset": "linux-gcc-debug" },
+    { "name": "build-linux-gcc-release", "configurePreset": "linux-gcc-release" },
+
+    { "name": "build-win-debug-conan", "configurePreset": "win-debug-conan" },
+    { "name": "build-win-release-conan", "configurePreset": "win-release-conan" },
+    { "name": "build-linux-gcc-debug-conan", "configurePreset": "linux-gcc-debug-conan" },
+    { "name": "build-linux-gcc-release-conan", "configurePreset": "linux-gcc-release-conan" }
+  ],
+
+  "testPresets": [
+    { "name": "test-win-debug", "configurePreset": "win-debug", "output": { "outputOnFailure": true } },
+    { "name": "test-win-release", "configurePreset": "win-release", "output": { "outputOnFailure": true } },
+    { "name": "test-linux-gcc-debug", "configurePreset": "linux-gcc-debug", "output": { "outputOnFailure": true } },
+    { "name": "test-linux-gcc-release", "configurePreset": "linux-gcc-release", "output": { "outputOnFailure": true } },
+
+    { "name": "test-win-debug-conan", "configurePreset": "win-debug-conan", "output": { "outputOnFailure": true } },
+    { "name": "test-win-release-conan", "configurePreset": "win-release-conan", "output": { "outputOnFailure": true } },
+    { "name": "test-linux-gcc-debug-conan", "configurePreset": "linux-gcc-debug-conan", "output": { "outputOnFailure": true } },
+    { "name": "test-linux-gcc-release-conan", "configurePreset": "linux-gcc-release-conan", "output": { "outputOnFailure": true } }
+  ]
+}
