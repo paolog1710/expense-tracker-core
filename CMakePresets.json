@@ -1,0 +1,104 @@
+{
+    "version": 6,
+
+    "configurePresets": [
+      {
+        "name": "ninja-base",
+        "hidden": true,
+        "generator": "Ninja",
+        "binaryDir": "${sourceDir}/build/${presetName}",
+        "cacheVariables": {
+          "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+        }
+      },
+
+      {
+        "name": "win-debug",
+        "inherits": "ninja-base",
+        "displayName": "Windows MSVC - Debug",
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        },
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug"
+        }
+      },
+      {
+        "name": "win-release",
+        "inherits": "ninja-base",
+        "displayName": "Windows MSVC - Release",
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        },
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      },
+
+      {
+        "name": "linux-gcc-debug",
+        "inherits": "ninja-base",
+        "displayName": "Linux GCC - Debug",
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Linux"
+        },
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Debug",
+          "CMAKE_C_COMPILER": "gcc",
+          "CMAKE_CXX_COMPILER": "g++"
+        }
+      },
+      {
+        "name": "linux-gcc-release",
+        "inherits": "ninja-base",
+        "displayName": "Linux GCC - Release",
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Linux"
+        },
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release",
+          "CMAKE_C_COMPILER": "gcc",
+          "CMAKE_CXX_COMPILER": "g++"
+        }
+      }
+
+    ],
+
+    "buildPresets": [
+      { "name": "build-win-debug", "configurePreset": "win-debug" },
+      { "name": "build-win-release", "configurePreset": "win-release" },
+      { "name": "build-linux-gcc-debug", "configurePreset": "linux-gcc-debug" },
+      { "name": "build-linux-gcc-release", "configurePreset": "linux-gcc-release" }
+    ],
+
+    "testPresets": [
+      {
+        "name": "test-win-debug",
+        "configurePreset": "win-debug",
+        "output": { "outputOnFailure": true }
+      },
+      {
+        "name": "test-win-release",
+        "configurePreset": "win-release",
+        "output": { "outputOnFailure": true }
+      },
+      {
+        "name": "test-linux-gcc-debug",
+        "configurePreset": "linux-gcc-debug",
+        "output": { "outputOnFailure": true }
+      },
+      {
+        "name": "test-linux-gcc-release",
+        "configurePreset": "linux-gcc-release",
+        "output": { "outputOnFailure": true }
+      }
+    ]
+  }
