@@ -45,15 +45,15 @@ jobs:
       - name: Set up CMake
         uses: lukka/get-cmake@latest
 
-      - name: Set up Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
-
       # MSVC environment for cl.exe
       - name: MSVC Dev Cmd (x64)
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
+
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v3
 
       # -------- Conan install (host+build=default), no toolset/platform injected --------
       - name: Conan install
