@@ -1,9 +1,52 @@
+# .clang-format
 BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++20
+
+# Line length & indentation
+ColumnLimit: 100
 IndentWidth: 2
-ColumnLimit: 120
+TabWidth: 2
+UseTab: Never
+
+# Braces & short statements
+BreakBeforeBraces: Attach
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+
+# Pointers/refs & spaces
 DerivePointerAlignment: false
 PointerAlignment: Left
-SortIncludes: true
+ReferenceAlignment: Left
+SpaceBeforeParens: ControlStatements
 SpacesInAngles: false
+SpacesInSquareBrackets: false
+
+# Wrapping/alignment
+AlignAfterOpenBracket: Align
+AlignOperands: true
 AlignConsecutiveAssignments: Consecutive
-AllowShortFunctionsOnASingleLine: Empty
+AlignConsecutiveDeclarations: None
+AlwaysBreakTemplateDeclarations: MultiLine
+BinPackArguments: true
+BinPackParameters: true
+
+# Includes
+SortIncludes: true
+IncludeBlocks: Regroup
+# (Optional) You can add IncludeCategories later if you want project headers grouped first.
+
+# Namespaces & preprocessor
+NamespaceIndentation: None
+IndentPPDirectives: AfterHash
+
+# Comments & lists
+ReflowComments: true
+SpacesBeforeTrailingComments: 1
+Cpp11BracedListStyle: true
+
+# Constructors/init lists
+BreakConstructorInitializersBeforeComma: true
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+AllowAllConstructorInitializersOnNextLine: false
