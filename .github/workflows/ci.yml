@@ -43,10 +43,7 @@ jobs:
             conan2-${{ runner.os }}-
 
       - name: Set up CMake
-        uses: lukka/get-cmake@v3
-
-      - name: Set up Ninja
-        uses: seanmiddleditch/gha-setup-ninja@v3
+        uses: lukka/get-cmake@latest
 
       # MSVC environment for cl.exe
       - name: MSVC Dev Cmd (x64)
@@ -55,17 +52,22 @@ jobs:
         with:
           arch: x64
 
+      - name: Set up Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v3
+
       # -------- Conan install (host+build=default), no toolset/platform injected --------
       - name: Conan install
         shell: bash
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
+            PR=conan/profiles/windows-msvc
             if [ "${{ matrix.config }}" = "Debug" ]; then
               OUT=build/win-debug-conan
             else
               OUT=build/win-release-conan
             fi
           else
+            PR=conan/profiles/linux-gcc
             if [ "${{ matrix.config }}" = "Debug" ]; then
               OUT=build/linux-gcc-debug-conan
             else
@@ -74,12 +76,9 @@ jobs:
           fi
 
           conan install . \
-            -pr:h=default -pr:b=default \
+            -pr:h="$PR" -pr:b=default \
             -s build_type=${{ matrix.config }} \
             -s compiler.cppstd=20 \
-            -c tools.cmake.cmaketoolchain:generator=Ninja \
-            -c tools.cmake.cmaketoolchain:toolset= \
-            -c tools.cmake.cmaketoolchain:generator_platform= \
             --output-folder="$OUT" --build=missing
 
       # -------- Configure / Build / Test via your presets --------
