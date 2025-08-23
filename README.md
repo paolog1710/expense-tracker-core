@@ -1,2 +1,2 @@
 # expense-tracker-core
-Set of core libraries implementing an basic expense tracker system
+Set of core libraries implementing a basic expense tracker system
