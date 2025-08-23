@@ -1,0 +1,15 @@
+Checks: >
+  bugprone-*,
+  performance-*,
+  readability-*,
+  modernize-*,
+  portability-*,
+  cppcoreguidelines-*,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-owning-memory,
+  -readability-magic-numbers
+WarningsAsErrors: ''
+HeaderFilterRegex: '^(src|include)/'
+AnalyzeTemporaryDtors: false
+FormatStyle: none
