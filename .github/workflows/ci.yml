@@ -77,9 +77,6 @@ jobs:
             -pr:h=default -pr:b=default \
             -s build_type=${{ matrix.config }} \
             -s compiler.cppstd=20 \
-            -c tools.cmake.cmaketoolchain:generator=Ninja \
-            -c tools.cmake.cmaketoolchain:toolset= \
-            -c tools.cmake.cmaketoolchain:generator_platform= \
             --output-folder="$OUT" --build=missing
 
       # -------- Configure / Build / Test via your presets --------
