@@ -45,4 +45,4 @@ Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
 
 ## Contributing
 
-Pull requests are welcome. Please ensure tests run successfully before submitting.
+Pull requests are welcome. Code owner review is mandatory.
