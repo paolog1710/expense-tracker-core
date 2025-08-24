@@ -1,0 +1,48 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+LAYOUT_WITH_LEGEND()
+
+title C2 — Containers inside Expense Tracker System
+
+Person(user, "User")
+
+System_Boundary(sys, "Expense Tracker System") {
+
+  Container(cli, "CLI App", "C++20 / CLI11", "User-facing command-line")
+  Container(desktop, "Desktop App (future)", "TBD", "GUI client")
+  Container(web, "Web API (future)", "TBD", "HTTP API")
+
+  Container(app, "Application Core", "C++20", "Use-cases; orchestrates the flow; façade for UIs")
+  Container(domain, "Domain Model", "C++20", "Entities & value objects; no I/O")
+
+  Container(plugins, "Parser Plugins Host", "C++20", "Loads CSV/PDF parsers per bank")
+  Container(parsers, "Parser Plugins", "C++20", "CSV/PDF adapters (per bank)")
+
+  Container(persist, "SQLite Persistence Adapter", "C++20 / sqlite3", "Implements repository port")
+  Container(config, "Config Adapter", "C++20 / TOML", "Implements config port")
+  Container(log, "Logging Adapter", "C++20 / spdlog", "Implements logging port")
+
+  ContainerDb(db, "SQLite Database", "SQLite", "Normalized transactions")
+}
+
+System_Ext(ocr, "OCR Engine", "Tesseract or similar")
+System_Ext(fs, "Local Filesystem")
+
+Rel(user, cli, "Uses")
+Rel(cli, app, "Calls use-case façade")
+
+Rel(desktop, app, "Calls use-case façade")
+Rel(web, app, "Calls use-case façade")
+
+Rel(app, domain, "Uses")
+Rel(app, plugins, "Loads/uses")
+Rel(plugins, parsers, "Discovers/executes")
+Rel(plugins, fs, "Reads statement files")
+Rel(plugins, ocr, "Uses (PDFs)")
+Rel(app, persist, "Stores/queries")
+Rel(app, config, "Reads settings")
+Rel(app, log, "Writes logs")
+Rel(persist, db, "R/W")
+
+SHOW_LEGEND()
+@enduml
