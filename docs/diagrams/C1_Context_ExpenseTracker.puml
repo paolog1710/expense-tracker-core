@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+LAYOUT_WITH_LEGEND()
+
+title C1 — System Context: Expense Tracker System
+
+Person(user, "User", "Runs CLI today; Desktop/Web in future")
+System(expense, "Expense Tracker System", "Parse, normalize, and store transactions")
+
+System_Ext(bank, "Bank Portals", "Provide CSV/PDF statements")
+System_Ext(ocr, "OCR Engine", "e.g., Tesseract (for PDFs)")
+System_Ext(fs, "Local Filesystem", "Where statements reside")
+
+Rel(user, expense, "Uses via CLI/Desktop/Web")
+Rel(bank, fs, "Drops files to")
+Rel(expense, fs, "Reads statements")
+Rel(expense, ocr, "Extracts text from PDFs (optional)")
+
+SHOW_LEGEND()
+@enduml
