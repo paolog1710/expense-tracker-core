@@ -19,18 +19,18 @@ Set of core libraries implementing a basic expense tracker system.
 
 ### Install dependencies
 ```bash
-conan install . --output-folder=build/linux-gcc-debug-conan --build missing
+conan install . --output-folder=build/linux-gcc-release --build=missing
 ```
 
 ### Configure & build
 ```bash
-cmake --preset linux-gcc-debug-conan
-cmake --build --preset build-linux-gcc-debug-conan
+cmake --preset build-linux-gcc-release
+cmake --build --preset build-linux-gcc-release
 ```
 
 ### Run tests
 ```bash
-ctest --preset test-linux-gcc-debug-conan
+ctest --preset test-linux-gcc-release
 ```
 
 Additional presets are available for Release and Windows builds (see `CMakePresets.json`).

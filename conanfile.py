@@ -25,7 +25,7 @@ class EtCoreRecipe(ConanFile):
         "sqlite3/3.46.1",
         "tl-expected/1.1.0",
         "catch2/3.6.0",
-        "boost/1.84.0",     # For Boost.DI
+        "di/1.3.2"
     )
 
     def config_options(self):
