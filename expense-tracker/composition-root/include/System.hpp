@@ -4,10 +4,11 @@
 
 namespace ExpenseTracker {
 
+// Base interface for all system variants
 class System {
 public:
-    System();
-    ~System();
+    virtual ~System() = default;
+    virtual int run(int argc, char* argv[]) = 0;
 
     // Prevent copying and moving
     System(const System&) = delete;
@@ -15,11 +16,11 @@ public:
     System(System&&) = delete;
     System& operator=(System&&) = delete;
 
-    int run(int argc, char* argv[]);
-
-private:
-    class Impl;
-    std::unique_ptr<Impl> pimpl;  // Hide implementation details
+protected:
+    System() = default;
 };
+
+// Factory function to create the appropriate system
+std::unique_ptr<System> createSystem();
 
 } // namespace ExpenseTracker

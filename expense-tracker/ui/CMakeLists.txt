@@ -1,9 +1,8 @@
-# CLI UI
-add_subdirectory(cli)
+# Add UI implementations based on configuration
+if(BUILD_UI_CLI)
+    add_subdirectory(cli)
+endif()
 
-# Export all targets
-add_library(ui INTERFACE)
-target_link_libraries(ui
-    INTERFACE
-        ui-cli
-)
+if(BUILD_UI_DESKTOP)
+    add_subdirectory(desktop-qt)
+endif()
