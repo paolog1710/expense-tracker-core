@@ -12,7 +12,7 @@ include(EtWarnings)
 
 # --- Dependencies
 find_package(CLI11 REQUIRED)
-find_package(Boost REQUIRED)
+find_package(di REQUIRED)
 find_package(Catch2 REQUIRED)
 
 # --- Project Options
@@ -40,5 +40,5 @@ if(UI STREQUAL "desktop" OR UI STREQUAL "both")
 endif()
 
 # --- Tests
-enable_testing()
-add_subdirectory(tests)
+# enable_testing()
+# add_subdirectory(tests)

@@ -1,18 +1,20 @@
+project(persistence-adapter-mysql VERSION 0.0.1 LANGUAGES CXX)
+
 # MySQL persistence adapter object library
-add_library(infrastructure-adapters-persistence-mysql-obj OBJECT)
-target_sources(infrastructure-adapters-persistence-mysql-obj
+add_library(${PROJECT_NAME}-obj OBJECT)
+target_sources(${PROJECT_NAME}-obj
     PRIVATE
         *.cpp # You'll need to specify actual source files
 )
-target_link_libraries(infrastructure-adapters-persistence-mysql-obj
+target_link_libraries(${PROJECT_NAME}-obj
     PUBLIC
-        infrastructure-ports-persistence    # implements these interfaces
+        persistence-port    # implements these interfaces
     PRIVATE
         # MySQL dependencies will be PRIVATE to not leak to consumers
 )
 
 # Shared library that consumes the object library
-add_library(infrastructure-adapters-persistence-mysql SHARED)
-target_link_libraries(infrastructure-adapters-persistence-mysql
+add_library(${PROJECT_NAME} SHARED)
+target_link_libraries(${PROJECT_NAME}
     PUBLIC
-        infrastructure-adapters-persistence-mysql-obj)
+        ${PROJECT_NAME}-obj)

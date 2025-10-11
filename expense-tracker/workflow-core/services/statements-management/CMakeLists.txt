@@ -1,25 +1,23 @@
+project(statements-management-service VERSION 0.0.1 LANGUAGES CXX)
+
 # Statement management service objects
-add_library(workflow-core-services-statements-management-obj OBJECT)
-target_sources(workflow-core-services-statements-management-obj
+add_library(${PROJECT_NAME}-obj OBJECT
+    src/StatementsService.cpp    # Replace with actual source files
+)
+target_include_directories(${PROJECT_NAME}-obj
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_link_libraries(${PROJECT_NAME}-obj
+    PUBLIC
+        statements-management-api  # implements primary ports
     PRIVATE
-        *.cpp # You'll need to specify actual source files
-    PUBLIC
-        *.hpp
-)
-target_include_directories(workflow-core-services-statements-management-obj
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
-target_link_libraries(workflow-core-services-statements-management-obj
-    PUBLIC
-        workflow-api-statements-management  # implements primary ports
-        infrastructure-ports                # uses secondary ports
-        workflow-core-domain-expense        # internal domain dependency
-        workflow-core-services-shared-obj   # internal shared dependency
+        infrastructure-ports     # uses secondary ports
+        domain-expense           # internal domain dependency
 )
 
 # Shared library that consumes the objects
-add_library(workflow-core-services-statements-management SHARED)
-target_link_libraries(workflow-core-services-statements-management
+add_library(${PROJECT_NAME} SHARED)
+target_link_libraries(${PROJECT_NAME}
     PUBLIC
-        workflow-core-services-statements-management-obj)
+        ${PROJECT_NAME}-obj)
