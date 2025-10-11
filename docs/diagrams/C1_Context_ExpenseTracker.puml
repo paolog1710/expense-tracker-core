@@ -10,11 +10,14 @@ System(expense, "Expense Tracker System", "Parse, normalize, and store transacti
 System_Ext(bank, "Bank Portals", "Provide CSV/PDF statements")
 System_Ext(ocr, "OCR Engine", "e.g., Tesseract (for PDFs)")
 System_Ext(fs, "Local Filesystem", "Where statements reside")
+System_Ext(db, "Database", "Where statements are stored")
 
 Rel(user, expense, "Uses via CLI/Desktop/Web")
-Rel(bank, fs, "Drops files to")
+Rel(user, bank, "Logs in to download statements")
+Rel(user, fs, "Places statements in")
 Rel(expense, fs, "Reads statements")
 Rel(expense, ocr, "Extracts text from PDFs (optional)")
+Rel(expense, db, "Stores normalized transactions in")
 
 SHOW_LEGEND()
 @enduml
