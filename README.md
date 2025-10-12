@@ -17,7 +17,7 @@ Set of core libraries implementing a basic expense tracker system.
 - [Conan](https://conan.io) package manager.
 - [CMake](https://cmake.org) >= 3.21 and [Ninja](https://ninja-build.org).
 
-### Install cona profiles
+### Install Conan profiles
 ```bash
 conan config install conan/
 ```
