@@ -1,9 +1,7 @@
-project(statements-management-api VERSION 0.0.1 LANGUAGES CXX)
+project(filesystem-ports VERSION 0.0.1 LANGUAGES CXX)
 
 set(HEADER_FILES
-    include/StatementImportI.hpp
-    include/StatementImportTypes.hpp
-    include/StatementImportError.hpp
+    include/FileSystemReaderI.hpp
 )
 
 add_library(${PROJECT_NAME} INTERFACE)

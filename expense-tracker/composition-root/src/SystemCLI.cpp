@@ -3,61 +3,80 @@
 #include <memory>
 #include <CLI/CLI.hpp>
 
-// Workflow API
-#include "workflow-api-statements-management/StatementImportAndParseI.hpp"
+// Primary ports
+#include "StatementImportI.hpp"
+#include "StatementImport.hpp"
 
 // Infrastructure
-#include "infrastructure-ports-persistence/PersistenceI.hpp"
-#include "infrastructure-adapters-persistence-mysql/MySQLAdapter.hpp"
-
-// UI Components
-#include "ui-adapters-cli/StatementsAdapter.hpp"
-#include "ui/cli/Commands.hpp"
+#include "FileSystemReaderI.hpp"
+#include "BankStatementParserI.hpp"
+#include "TransactionRepositoryI.hpp"
+#include "StandardFileSystemReader.hpp"
+#include "BankStatementParserFactory.hpp"
+#include "SqliteTransactionRepository.hpp"
 
 namespace di = boost::di;
 
-namespace ExpenseTracker {
+namespace et {
 
 // Configure DI bindings
-auto makeInjector() {
+auto makeCliInjector() {
+    auto baseInjector = makeBasicConfig();
+
     return di::make_injector(
-        // Bind infrastructure ports to adapters
-        di::bind<Infrastructure::Persistence::PersistenceI>()
-            .to<Infrastructure::Persistence::MySQLAdapter>(),
+        baseInjector,
 
-        // Bind workflow API to core implementations
-        di::bind<Workflow::StatementsManagement::StatementImportAndParseI>()
-            .to<Workflow::StatementsManagement::StatementsManagementService>(),
+        // Bind workflow services as singletons
+        di::bind<workflow::statements::StatementImportI>()
+            .to<workflow::services::StatementImport>()
+            .in(di::singleton),
 
-        // Bind concrete types as singletons
-        di::bind<Infrastructure::Persistence::MySQLAdapter>().in(di::singleton),
-        di::bind<Workflow::StatementsManagement::StatementsManagementService>().in(di::singleton),
-        di::bind<UI::CLI::StatementsAdapter>().in(di::singleton),
-        di::bind<UI::CLI::Commands>().in(di::singleton)
+        // Bind infrastructure adapters as singletons
+        di::bind<infrastructure::ports::FileSystemReaderI>()
+            .to<infrastructure::adapters::StandardFileSystemReader>()
+            .in(di::singleton),
+
+        di::bind<infrastructure::ports::BankStatementParserFactoryI>()
+            .to<infrastructure::adapters::BankStatementParserFactory>()
+            .in(di::singleton),
+
+        di::bind<infrastructure::ports::TransactionRepositoryI>()
+            .to<infrastructure::adapters::SqliteTransactionRepository>()
+            .in(di::singleton)
     );
 }
 
 class SystemCLI::Impl {
 public:
-    Impl() : injector_(makeInjector()) {
+    Impl() : injector_(makeCliInjector()) {
         // DI will resolve all dependencies automatically
-        commands_ = injector_.create<std::shared_ptr<UI::CLI::Commands>>();
+        statementImport_ = injector_.create<std::shared_ptr<workflow::statements::StatementImportI>>();
     }
 
     int run(int argc, char* argv[]) {
         try {
             CLI::App app{"Expense Tracker - Command Line Interface"};
-            commands_->setupCommands(app);
+
+            // TODO: Setup CLI commands using statementImport_
+
             app.parse(argc, argv);
             return 0;
         } catch (const CLI::ParseError& e) {
+            return app.exit(e);
+        } catch (const std::exception& e) {
+            std::cerr << "Error: " << e.what() << std::endl;
             return 1;
         }
     }
 
+    std::shared_ptr<workflow::statements::StatementImportI> getStatementImport() {
+        return statementImport_;
+    }
+
 private:
     di::injector<> injector_;
-    std::shared_ptr<UI::CLI::Commands> commands_;
+    std::shared_ptr<workflow::statements::StatementImportI> statementImport_;
+};
 
 SystemCLI::SystemCLI() : pimpl(std::make_unique<Impl>()) {}
 SystemCLI::~SystemCLI() = default;
@@ -66,4 +85,13 @@ int SystemCLI::run(int argc, char* argv[]) {
     return pimpl->run(argc, argv);
 }
 
-} // namespace ExpenseTracker
+std::shared_ptr<workflow::statements::StatementImportI> SystemCLI::getStatementImport() {
+    return pimpl->getStatementImport();
+}
+
+// Factory implementation for CLI system
+std::unique_ptr<System> createSystem() {
+    return std::make_unique<SystemCLI>();
+}
+
+} // namespace et

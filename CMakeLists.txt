@@ -14,6 +14,7 @@ include(EtWarnings)
 find_package(CLI11 REQUIRED)
 find_package(di REQUIRED)
 find_package(Catch2 REQUIRED)
+find_package(sqlite3 REQUIRED)  # Note: lowercase name as per Conan package
 
 # --- Project Options
 if(NOT DEFINED UI)

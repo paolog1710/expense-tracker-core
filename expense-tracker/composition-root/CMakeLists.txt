@@ -7,6 +7,14 @@ target_include_directories(composition-root-base
         ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+target_link_libraries(composition-root-base
+    PUBLIC
+        # Primary ports (API)
+        statements-management-api
+    PRIVATE
+        domain                      # Domain types
+)
+
 if(BUILD_UI_CLI)
     # CLI system implementation
     add_library(composition-root-cli STATIC
@@ -19,12 +27,12 @@ if(BUILD_UI_CLI)
     target_link_libraries(composition-root-cli
         PRIVATE
             composition-root-base
-            # Core API and Implementation
-            workflow-api-statements-management
-            workflow-core-services-statements-management
-            # Infrastructure
-            infrastructure-ports-persistence
-            infrastructure-adapters-persistence-mysql
+            # Core services
+            statements-management-service
+            # Infrastructure adapters
+            filesystem-adapters
+            parser-adapters
+            repository-adapters
             # UI Layer
             ui-cli                  # High-level UI components
             ui-adapters-cli        # UI adapters
@@ -38,5 +46,5 @@ if(BUILD_UI_CLI)
     )
     target_link_libraries(expense-tracker-cli
         PRIVATE
-        composition-root-lib
+            composition-root-cli
 )

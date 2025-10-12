@@ -1,9 +1,7 @@
-project(statements-management-api VERSION 0.0.1 LANGUAGES CXX)
+project(parser-ports VERSION 0.0.1 LANGUAGES CXX)
 
 set(HEADER_FILES
-    include/StatementImportI.hpp
-    include/StatementImportTypes.hpp
-    include/StatementImportError.hpp
+    include/BankStatementParserI.hpp
 )
 
 add_library(${PROJECT_NAME} INTERFACE)
@@ -17,3 +15,8 @@ target_sources(${PROJECT_NAME}
     INTERFACE
         ${HEADER_FILES}
 )
+
+# Link against domain library for Transaction types
+target_link_libraries(${PROJECT_NAME}
+    INTERFACE
+        domain)
