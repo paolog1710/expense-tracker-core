@@ -17,20 +17,25 @@ Set of core libraries implementing a basic expense tracker system.
 - [Conan](https://conan.io) package manager.
 - [CMake](https://cmake.org) >= 3.21 and [Ninja](https://ninja-build.org).
 
+### Install cona profiles
+```bash
+conan config install conan/
+```
+
 ### Install dependencies
 ```bash
-conan install . --output-folder=build/linux-gcc-release --build=missing
+conan install . -pr windows-msvc-release --build=missing
 ```
 
 ### Configure & build
 ```bash
-cmake --preset build-linux-gcc-release
-cmake --build --preset build-linux-gcc-release
+cmake --preset win-release
+cmake --build --preset win-release
 ```
 
 ### Run tests
 ```bash
-ctest --preset test-linux-gcc-release
+ctest --preset win-release
 ```
 
 Additional presets are available for Release and Windows builds (see `CMakePresets.json`).

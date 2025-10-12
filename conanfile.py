@@ -33,7 +33,7 @@ class EtCoreRecipe(ConanFile):
             del self.options.fPIC
 
     def layout(self):
-        cmake_layout(self)
+        cmake_layout(self, generator="Ninja")  # toolchain lands in build/<BuildType>/generators/
 
     def generate(self):
         deps = CMakeDeps(self)

@@ -6,7 +6,6 @@
       "name": "ninja-base",
       "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
       }
@@ -16,9 +15,10 @@
       "inherits": "ninja-base",
       "displayName": "Windows MSVC - Debug (Conan)",
       "condition": { "type": "equals", "lhs": "${hostSystemName}", "rhs": "Windows" },
+      "binaryDir": "${sourceDir}/build/Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/win-debug/build/Debug/generators/conan_toolchain.cmake",
+        "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/build/Debug/generators/conan_toolchain.cmake",
         "UI": "cli"
       }
     },
@@ -59,16 +59,16 @@
   ],
 
   "buildPresets": [
-    { "name": "build-win-debug", "configurePreset": "win-debug" },
-    { "name": "build-win-release", "configurePreset": "win-release" },
-    { "name": "build-linux-gcc-debug", "configurePreset": "linux-gcc-debug" },
-    { "name": "build-linux-gcc-release", "configurePreset": "linux-gcc-release" }
+    { "name": "win-debug", "configurePreset": "win-debug" },
+    { "name": "win-release", "configurePreset": "win-release" },
+    { "name": "linux-gcc-debug", "configurePreset": "linux-gcc-debug" },
+    { "name": "linux-gcc-release", "configurePreset": "linux-gcc-release" }
   ],
 
   "testPresets": [
-    { "name": "test-win-debug", "configurePreset": "win-debug", "output": { "outputOnFailure": true } },
-    { "name": "test-win-release", "configurePreset": "win-release", "output": { "outputOnFailure": true } },
-    { "name": "test-linux-gcc-debug", "configurePreset": "linux-gcc-debug", "output": { "outputOnFailure": true } },
-    { "name": "test-linux-gcc-release", "configurePreset": "linux-gcc-release", "output": { "outputOnFailure": true } }
+    { "name": "win-debug", "configurePreset": "win-debug", "output": { "outputOnFailure": true } },
+    { "name": "win-release", "configurePreset": "win-release", "output": { "outputOnFailure": true } },
+    { "name": "linux-gcc-debug", "configurePreset": "linux-gcc-debug", "output": { "outputOnFailure": true } },
+    { "name": "linux-gcc-release", "configurePreset": "linux-gcc-release", "output": { "outputOnFailure": true } }
   ]
 }
