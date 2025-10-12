@@ -66,6 +66,13 @@ jobs:
             PROFILE="linux-gcc-${{ matrix.config }}"
           fi
 
+          # Create the build directory structure
+          if [ "${{ matrix.config }}" = "Debug" ]; then
+            mkdir -p build/Debug
+          else
+            mkdir -p build/Release
+          fi
+
           conan install . \
             -pr:h=$PROFILE -pr:b=$PROFILE \
             --build=missing
