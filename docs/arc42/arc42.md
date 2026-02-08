@@ -6,12 +6,31 @@
 ---
 
 ## 1. Introduction & Goals
-- **Goal:** Parse bank statements (CSV/PDF) from multiple banks, **normalize** transactions, and **store** them locally for querying and analysis.
-- **Key quality attributes:** Modifiability (plug new parsers), Testability (use-cases run without I/O), Reliability (deterministic parsing with golden tests), Portability (Windows/Linux), Maintainability (clean boundaries, ADRs).
+- **Goals:**
+    - **Functional:**
+        - Deliver a flexible system to track the expenses and net-worth of an individual, with AI-assisted insights.
+        - Parse bank and broker statements automatically, allowing manual corrections and adjustments.
+        - Guarantee data privacy by keeping all information and processing local.
+        - Show statistics about expenses on a desired time period, making use of a customized categorization.
+        - Show the net-worth evolution.
+    - **Non-functional:**
+        - Experiment with Software Architecture principles, best practices and processes.
+        - Experiment with Hexagonal architecture.
+        - Experiment a contract-first approach using gRPC.
+        - Experiment with AI for the software development.
+        - Experiment with local AI models
+
+- **Key quality attributes:**
+    - Modifiability (plug new parsers),
+    - Confidentiality (local storage only, AI models run locally),
+    - Testability (use-cases run without I/O),
+    - Reliability (deterministic parsing with golden tests),
+    - Portability (Windows/Linux),
+    - Maintainability (clean boundaries, contract-first approach, ADRs).
 - **Primary stakeholders:** Personal user (you), future contributors.
 
 ## 2. Constraints
-- **Technology:** C++20, CMake + Ninja, Conan v2, SQLite, CLI11, spdlog, nlohmann::json, tl::expected.
+- **Technology:** C++20, gRPC, CMake + Ninja, Conan v2, SQLite, CLI11, spdlog, nlohmann::json, tl::expected.
 - **Architecture:** Clean/Hexagonal (ports & adapters). Domain must not depend on frameworks.
 - **Build/CI:** GitHub Actions (Windows + Linux), formatting gates (clang-format), unit tests via ctest.
 - **Privacy:** Local storage only (SQLite). No external data exfiltration.
@@ -24,13 +43,18 @@ The system includes the **Core** and **UIs** (CLI today; Desktop/Web in the futu
 ```
 
 ## 4. Solution Strategy
-- **Hexagonal/Clean Architecture:** strict dependency rule (inwards). Core defines ports; adapters implement them.
-- **Façade for UIs:** IExpenseTrackerService exposes use-cases to CLI/Desktop/Web.
-- **Pluggable parsers:** CSV/PDF adapters per bank behind IParser port; optional OCR adapter.
-- **Persistence:** ITransactionRepository with SQLite adapter (migrations runner); DB is replaceable.
-- **Error handling:** tl::expected<T, Error> at boundaries; domain avoids exceptions for control flow.
-- **Deterministic time:** IClock port enables reproducible tests.
-- **Configuration:** IConfig calibrated by TOML; registries define bank profiles.
+- **API-first design:** define gRPC protofiles as public contracts for external GUI development.
+- **Hexagonal/Clean Architecture:** strict dependency rule (inwards).
+    - gRPC protofiles are the primary API contract;
+    - GUI generates client code from protofiles, to be able to interact with the core.
+    - Stubs generated from protofiles are representing the Primary Ports
+    - Core logic (domain + use-cases) implements the Primary Ports and orchestrates calls to Secondary Ports to implement the business logic.
+    - Secondary Ports are defined as interfaces, to interact with external systems (file system, DB, OCR engine) and allow for testability and modifiability.
+    - Secondary Adapters implement the Secondary Ports and allow runtime pluggability and platform-specific implementations.
+- **Domain-driven design:** protofiles are organized per domains, focusing on the use-cases and workflows to be offered to the users.
+- **API Versioning:** gRPC allows for backward-compatible API evolution; protofiles are versioned in the path (e.g., v1/).
+- **Persistence:** is handled in the Secondary Ports/Adapters layer, allowing fast migration to different storage solutions if needed.
+- **Error handling:** tl::expected<T, Error> at boundaries (Secondary Ports); domain avoids exceptions for control flow.
 
 ## 5. Building Block View
 
@@ -49,34 +73,18 @@ The system includes the **Core** and **UIs** (CLI today; Desktop/Web in the futu
 ```
 
 ## 6. Runtime View
-
-### Scenario: Parse + Import CSV
-
-1. CLI calls IExpenseTrackerService::parse_statement(file, bank).
-2. ParseStatementUseCase loads bank profile via IConfig, calls IParser adapter (CSV for that bank).
-3. Adapter returns RawTransactionDTO[]; NormalizeTransactionsService maps to Transaction (domain).
-4. CLI then calls ImportTransactionsUseCase with normalized transactions.
-5. Use-case writes via ITransactionRepository (SQLite adapter).
-
-### Scenario: Parse + Import PDF
-Same as above; PdfParserAdapter_* may use OcrAdapter_Tesseract to extract text.
-
+TODO
 ## 7. Deployment View
-- **Local machine (Windows/Linux):** single process (et-cli) linked to Core libs + adapters; SQLite file on disk.
-- **Future:** a Web API container hosting the same Core; DB remains local or moves to server path. Possible change of overall architecture for scalability.
+TODO
 
 ## 8. Cross-cutting Concepts
 - **Logging:** ILogger (spdlog adapter). Structured logs for parse/import steps.
-- **Configuration:** IConfig (TOML). Bank profiles define column/date formats, amount sign conventions.
-- **DTO mapping:** Edge DTOs (RawTransactionDTO) mapped to domain Transaction.
-- **Validation:** domain invariants (Money arithmetic, non-nullable fields).
+- **DTO mapping:** Primary port DTOs mapped to internal Domain Model.
 - **Testing:** golden tests for parsers, contract tests for ports, in-memory fakes for use-cases.
-- **Security/Privacy:** local storage; no external calls except optional OCR; least-privilege file access.
-- **Observability:** (optional) counters per parser; timing via IClock.
+- **Security/Privacy:** local storage; no external calls; AI models run locally, least-privilege file access.
 
 ## 9. Architecture Decisions (ADRs)
-
-
+TODO
 
 ## 10. Quality Requirements
 
@@ -88,14 +96,11 @@ Same as above; PdfParserAdapter_* may use OcrAdapter_Tesseract to extract text.
 - **Portability:** Build and test on Windows/Linux via CI.
 
 ## 11. Risks & Technical Debt
-- PDF parsing/OCR variability; consider centralized text extraction helpers.
-- Plugin ABI stability (if dynamic loading is introduced); prefer static linking initially.
-- Category inference (future) might require ML—out of scope for now.
-- Timezone/currency edge cases; define behavior in specs.
+- PDF parsing/OCR variability;
+- AI Category inference (future) might require ML—out of scope for now.
 
 ## 12. Glossary
 *Statement:* Bank-exported CSV/PDF with transactions.<br>
 *Transaction:* (date, payee, memo, amount, account, category).<br>
 *Normalization:* Mapping bank-specific fields/format to canonical domain model.<br>
-*Parser:* Adapter that implements IParser for a bank/format.<br>
-*Repository:* Adapter that implements ITransactionRepository for persistence.<br>
+*Parser:* Adapter that implements a specific parsing logic for a bank/format.<br>
