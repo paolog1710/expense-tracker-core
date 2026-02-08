@@ -9,5 +9,24 @@
                 "&{ Import-Module \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\Common7\\Tools\\Microsoft.VisualStudio.DevShell.dll\"; Enter-VsDevShell -VsInstallPath \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\" -SkipAutomaticLocation -DevCmdArguments '-arch=x64 -host_arch=x64' }"
             ]
         }
+    },
+    "files.associations": {
+        "memory": "cpp",
+        "exception": "cpp"
+    },
+    "editor.inlineSuggest.enabled": true,
+    "github.copilot.enable": {
+        "*": true,
+        "markdown": true,
+        "plaintext": true
+    },
+    "[markdown]": {
+        "editor.inlineSuggest.enabled": true,
+        "editor.quickSuggestions": {
+            "other": true,
+            "comments": true,
+            "strings": true
+        },
+        "editor.wordBasedSuggestions": "matchingDocuments"
     }
 }

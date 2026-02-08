@@ -29,8 +29,8 @@ jobs:
       - name: Install Conan v2
         run: pip install --upgrade conan
 
-      - name: Create default Conan profile
-        run: conan profile detect --force
+      - name: Install Conan config
+        run: conan config install conan/
 
       - name: Cache Conan
         uses: actions/cache@v4
@@ -56,47 +56,42 @@ jobs:
       - name: Set up Ninja
         uses: seanmiddleditch/gha-setup-ninja@v3
 
-      # -------- Conan install (host+build=default), no toolset/platform injected --------
+      # -------- Conan install with unified host/build profile --------
       - name: Conan install
         shell: bash
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
-            PR=conan/profiles/windows-msvc
-            if [ "${{ matrix.config }}" = "Debug" ]; then
-              OUT=build/win-debug-conan
-            else
-              OUT=build/win-release-conan
-            fi
+            PROFILE="windows-msvc-${{ matrix.config }}"
           else
-            PR=conan/profiles/linux-gcc
-            if [ "${{ matrix.config }}" = "Debug" ]; then
-              OUT=build/linux-gcc-debug-conan
-            else
-              OUT=build/linux-gcc-release-conan
-            fi
+            PROFILE="linux-gcc-${{ matrix.config }}"
+          fi
+
+          # Create the build directory structure
+          if [ "${{ matrix.config }}" = "Debug" ]; then
+            mkdir -p build/Debug
+          else
+            mkdir -p build/Release
           fi
 
           conan install . \
-            -pr:h="$PR" -pr:b=default \
-            -s build_type=${{ matrix.config }} \
-            -s compiler.cppstd=20 \
-            --output-folder="$OUT" --build=missing
+            -pr:h=$PROFILE -pr:b=$PROFILE \
+            --build=missing
 
-      # -------- Configure / Build / Test via your presets --------
+      # -------- Configure / Build / Test via presets --------
       - name: Configure
         shell: bash
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
             if [ "${{ matrix.config }}" = "Debug" ]; then
-              cmake --preset win-debug-conan --fresh
+              cmake --preset win-debug --fresh
             else
-              cmake --preset win-release-conan --fresh
+              cmake --preset win-release --fresh
             fi
           else
             if [ "${{ matrix.config }}" = "Debug" ]; then
-              cmake --preset linux-gcc-debug-conan --fresh
+              cmake --preset linux-gcc-debug --fresh
             else
-              cmake --preset linux-gcc-release-conan --fresh
+              cmake --preset linux-gcc-release --fresh
             fi
           fi
 
@@ -105,15 +100,15 @@ jobs:
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
             if [ "${{ matrix.config }}" = "Debug" ]; then
-              cmake --build --preset build-win-debug-conan --parallel
+              cmake --build --preset win-debug
             else
-              cmake --build --preset build-win-release-conan --parallel
+              cmake --build --preset win-release
             fi
           else
             if [ "${{ matrix.config }}" = "Debug" ]; then
-              cmake --build --preset build-linux-gcc-debug-conan --parallel
+              cmake --build --preset linux-gcc-debug
             else
-              cmake --build --preset build-linux-gcc-release-conan --parallel
+              cmake --build --preset linux-gcc-release
             fi
           fi
 
@@ -122,15 +117,15 @@ jobs:
         run: |
           if [ "${{ runner.os }}" = "Windows" ]; then
             if [ "${{ matrix.config }}" = "Debug" ]; then
-              ctest --preset test-win-debug-conan
+              ctest --preset win-debug
             else
-              ctest --preset test-win-release-conan
+              ctest --preset win-release
             fi
           else
             if [ "${{ matrix.config }}" = "Debug" ]; then
-              ctest --preset test-linux-gcc-debug-conan
+              ctest --preset linux-gcc-debug
             else
-              ctest --preset test-linux-gcc-release-conan
+              ctest --preset linux-gcc-release
             fi
           fi
 

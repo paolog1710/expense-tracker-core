@@ -25,6 +25,7 @@ class EtCoreRecipe(ConanFile):
         "sqlite3/3.46.1",
         "tl-expected/1.1.0",
         "catch2/3.6.0",
+        "di/1.3.2"
     )
 
     def config_options(self):
@@ -32,7 +33,7 @@ class EtCoreRecipe(ConanFile):
             del self.options.fPIC
 
     def layout(self):
-        cmake_layout(self)
+        cmake_layout(self, generator="Ninja")  # toolchain lands in build/<BuildType>/generators/
 
     def generate(self):
         deps = CMakeDeps(self)
