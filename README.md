@@ -7,8 +7,8 @@ Set of core libraries implementing a basic expense tracker system.
 ## Features
 - Parse bank statement files and normalize transactions.
 - Store data locally in SQLite for offline use.
-- Command-line workflow with planned commands: `parse`, `import`, `list`, `stats`.
-- Modular C++20 code designed for extensibility and portability.
+- Manage categories and assign them to transactions.
+- Create statistics and reports based on transaction data.
 
 ## Getting Started
 
